@@ -1,0 +1,65 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="card" style="width: 18rem;margin:0 auto;float=none;margin-bottom: 10px;"	>
+	  {% if listing.image_url != '' %}
+	    	<a href="{% url 'listing' listing.id user.id %}">
+				<img class="card-img-top" src="{{listing.image_url}}" alt="Card image cap" height="300px" width="50px">
+			</a>
+		{% else %}
+	    	 <a href="{% url 'listing' listing.id user.id %}">
+	    	 	<img class = "card-img-top" src="https://cms-assets.tutsplus.com/uploads/users/30/posts/21015/preview_image/picture-tag.png" height="300px" width="50px">
+			</a>
+	    {% endif %}
+	<div class="card-body">
+		<h5 class="card-title">{{listing.title}}</h5>
+			{% if listing.bid.get.max_bid > listing.bid.get.starting_bid %}
+				<h1 class="card-title">{{ listing.bid.get.max_bid }} $</h1>
+			{% else %}
+				<h1 class="card-title">{{ listing.bid.get.starting_bid }} $</h1>
+			{% endif %}
+				<p class="card-text">{{listing.describtion}}</p>
+				<form action = "{% url 'listing' listing.id user.id %}" method = 'post'>
+					{% csrf_token %}
+					{% if listing.watchlistitem.get in user.watchlistitems.all %}
+					<input type="submit" value = "Remove from watchlist" class = "btn btn-primary">
+					<input type="hidden" name="remove" value="yes">
+					{% else %}
+					<input type="submit" value = "Add to watchlist" class = "btn btn-primary">
+					<input type="hidden" name="remove" value="no">
+					{% endif %}
+				</form>
+				{{ listing.watchlistitem.objects.get }}
+	</div>
+</div>
+{% if listing in user.listings.all %}
+		<form method = 'post' action = "{% url 'listing' listing.id user.id %}" style="width: 10rem;margin:0 auto;float=none;margin-bottom: 10px;">
+			{% csrf_token %} 
+
+			<input type="hidden" name="cancel" value = "">
+			<input type="submit" value = "Cancel Auction" class = "btn btn-primary">
+		</form>
+{% else %}
+		<form method = 'post' action = "{% url 'listing' listing.id user.id %}" style="width: 15rem;margin:0 auto;float=none;margin-bottom: 10px;">
+			{% csrf_token %}
+
+			<input type="number" name="bid" min = "{{listing.bid.get.max_bid}}" placeholder="More than {{ listing.bid.get.max_bid}}">
+			<input type="submit" value = "Bid" class = "btn btn-primary">
+		</form>
+{% endif %}
+		{% if listing.bid.get.user_id.username == 'Mazen' %}
+		{% if listing.active == False %} 
+			 <h3 style = "color :green">Your are the winner</h3>
+		{% endif %}
+		{% endif %}
+<h3>Comments Section:</h3>
+	{% for comment in listing.comments.all%}
+	<p class="text-justify" style = "border : 1px solid #000;margin : 20px; padding: 10px">{{comment.comment}}</p>
+	{% endfor %}
+<form method = 'post' action = "{% url 'listing' listing.id user.id %}">
+	{% csrf_token %}
+	<textarea name="comment" rows="4" cols="50" placeholder="Write your comment here" style = "margin:20px;padding: 10px"></textarea><br>
+	<input type="submit" value = "Add Comment" class = "btn btn-primary" style = "margin:20px;padding: 10px">
+</form>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{{ category.listing_id }}
+
+{% if user.is_authenticated %}
+   	<div class="row">
+	{% for category in cat %}
+	 {% if category.listing_id.active %}
+				<div class="col-md-4" style="margin-top:100px">
+		    	 	<div class="card" style="width: 15rem;">
+	    	 {% if category.listing_id.image_url != '' %}
+	    	 		<a href="{% url 'listing' category.listing_id.id user.id %}">
+					  <img class="card-img-top" src="{{category.listing_id.image_url}}" alt="Card image cap" height="300px" width="50px">
+					</a>
+					  {% else %}
+	    	 		<a href="{% url 'listing' category.listing_id.id user.id %}">
+	    	 		  <img class = "card-img-top" src="https://cms-assets.tutsplus.com/uploads/users/30/posts/21015/preview_image/picture-tag.png" height="300px" width="50px">
+					</a>
+	    	 {% endif %}
+
+					  <div class="card-body">
+					    <h5 class="card-title">{{category.listing_id.title}}</h5>
+					    {% if category.listing_id.bid.get.max_bid > category.listing_id.bid.get.starting_bid %}
+					    <h1 class="card-title">{{ category.listing_id.bid.get.max_bid }} $</h1>
+					    {% else %}
+					    <h1 class="card-title">{{ category.listing_id.bid.get.starting_bid }} $</h1>
+					    {% endif %}
+					    <p class="card-text">{{category.listing_id.describtion}}</p>
+					  </div>
+					</div>
+				</div>
+	    	 
+	    	  {% endif %}
+	    	  {% empty %}
+	    	  <li>No listings avaliable.</li>
+	{% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

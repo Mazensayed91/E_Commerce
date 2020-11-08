@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+{% if user.is_authenticated %}
+	<h1>Add a new listing : </h1><br>
+    <form action="{% url 'create_listing' user.id %}" method = "post">
+    	{% csrf_token %}
+    	Title : <input type="text" name="title"><br><br>
+    	Describtion : <input type="text" name="desc"><br><br>
+    	Starting Bid : <input type="text" name="start_bid"><br><br>
+    	URL : <input type="text" name="url"><br><br>
+    	Category : <input type="text" name="cat"><br><br>
+
+    <input type="submit" value = "Add">
+    </form>
+{% endif %}
+{% endblock %}
